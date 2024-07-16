@@ -3,15 +3,24 @@ const Blog = require("../Models/BlogSchema");
 
 // create Blogs
 const createBlog = asyncHandler(async (req, res) => {
+  if(req.file){
+    console.log('file check successful', req.file);
+  }
   try {
-    const { title, description, image, category } = req.body;
-    if (!title || !description || !image || !category) {
+    const { title, description,  category } = req.body;
+    if (!title || !description  || !category) {
       return res
         .status(400)
         .json({
           error:
             "All fields (title, description, image, category) are required",
         });
+    }
+    let image;
+    if (req.file) {
+      image = req.file.path;
+    } else {
+      return res.status(400).json({ error: "Image is required" });
     }
     const newBlog = new Blog({
       title,

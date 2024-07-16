@@ -67,6 +67,10 @@ app.use("/api/v1", userrouter);
 const blogrouter = require("./Routes/BlogRoute");
 app.use("/api/v1/blog", blogrouter);
 
+// blogs  routes defined
+const noticerouter = require("./Routes/NoticeRoute");
+app.use("/api/v1/notice", noticerouter);
+
 app.listen(PORT, () => {
   console.log(` Server listening on ${PORT}`);
 });

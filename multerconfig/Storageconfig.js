@@ -3,7 +3,7 @@ const multer = require("multer");
 // Set up Multer storage options
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads");
+    cb(null, "./uploads/noticePost");
   },
   filename: function (req, file, cb) {
     // Set filename for uploaded files
@@ -12,20 +12,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// Define file filter function to allow only specific image types
-// const fileFilter = (req, file, cb) => {
-//   if (
-//     file.mimetype === 'image/png' ||
-//     file.mimetype === 'image/jpg' ||
-//     file.mimetype === 'image/jpeg'
-//   ) {
-//     // Accept file
-//     cb(null, true);
-//   } else {
-//     // Reject file
-//     cb(new Error('Only jpeg, png, jpg images are allowed'), false);
-//   }
-// };
+
 
 // Define file filter function to allow only specific image types
 const fileFilter = (req, file, cb) => {
