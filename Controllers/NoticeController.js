@@ -1,10 +1,10 @@
 const Notice = require("../Models/NoticeSchema");
 const asyncHandler = require("express-async-handler");
+const nodemailer = require("nodemailer");
 
 // Create a new notice
 const createNotice = asyncHandler(async (req, res) => {
   try {
-  
     // const { images } = req.body;
     const image = req.files.map((file) => file.path);
     const newNotice = new Notice({ image });
@@ -15,7 +15,6 @@ const createNotice = asyncHandler(async (req, res) => {
   }
 });
 
-
 // Get all notices
 const getNotices = asyncHandler(async (req, res) => {
   try {
@@ -25,7 +24,6 @@ const getNotices = asyncHandler(async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 // Delete a notice
 const deleteNotice = asyncHandler(async (req, res) => {
@@ -38,4 +36,81 @@ const deleteNotice = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createNotice, getNotices, deleteNotice };
+// contact
+const contactHandler = asyncHandler(async (req, res) => {
+  try {
+    console.log(req.body);
+    const { name, email, phone, message } = req.body;
+    if (
+      name.trim() === "" ||
+      email.trim() === "" ||
+      phone.trim() === "" ||
+      message.trim() === ""
+    ) {
+      return res.json({
+        success: false,
+        message: "All fields are required.",
+      });
+    }
+    const transporter = nodemailer.createTransport({
+      // Specify your email service details (SMTP or other service)
+      service: "gmail",
+      auth: {
+        user: "sahanirakesh877@gmail.com",
+        pass: "pnvh gmbs hzrd wdzc",
+      },
+    });
+    // Compose email message
+    const smailOptions = {
+      to: "sahaniranzeth877@gmail.com",
+      subject: "Message from aakshara.com",
+      html: `
+      <h1>By: </h1><span>${req.body.email}</span>
+      <h1>Name: </h1><span>${req.body.name}</span>
+
+      <h1>Phone: </h1><span>${req.body.phone}</span>
+      <p>${req.body.message}</p>
+    `,
+    };
+
+    const rmailOptions = {
+      from: "sahanirakesh877@gmail.com",
+      to: req.body.email,
+      subject: "Thank You for Contacting Us!",
+      html: `
+      <h1>We’ve Received Your Message </h1>
+      <p>Hello ${req.body.name},</p>
+      <p>We will get back to you sortly</p>
+      <p>If you did not request this, please ignore this email.</p>
+    `,
+    };
+
+    // Send email
+    transporter.sendMail(smailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        return res
+          .status(500)
+          .json({ error: "Email could not be sent to aakshara" });
+      }
+      console.log("Email sent to aakshara " + info.response);
+
+      transporter.sendMail(rmailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          return res
+            .status(500)
+            .json({ error: "Email could not be sent to client" });
+        }
+        res.json({
+          success: true,
+          message: "message sent",
+        });
+      });
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = { createNotice, getNotices, deleteNotice, contactHandler };

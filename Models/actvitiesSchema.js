@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const blogSchema = new mongoose.Schema(
+const activitiesSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -14,10 +14,13 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    category: { type: mongoose.Types.ObjectId, ref: "blogCategory" },
+    category: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-const blogModel = mongoose.model("Blog", blogSchema);
+const blogModel = mongoose.model("Activities", blogSchema);
 module.exports = blogModel;
