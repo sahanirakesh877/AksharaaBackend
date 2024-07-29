@@ -14,7 +14,7 @@ const blogStorage = multer.diskStorage({
 
 const noticeStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/uploads/notices");
+    cb(null, "./uploads/notices");
   },
   filename: function (req, file, cb) {
     // Set filename for uploaded files

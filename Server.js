@@ -39,6 +39,8 @@ app.use(
   })
 );
 
+app.use("/uploads",express.static("uploads/") )
+
 require("./service/passport");
 // setup passport instance
 app.use(passport.initialize());
@@ -69,7 +71,7 @@ app.use("/api/v1", userrouter);
 const blogrouter = require("./Routes/BlogRoute");
 app.use("/api/v1/blog", blogrouter);
 
-// blogs  routes defined
+// notice  routes defined
 const noticerouter = require("./Routes/NoticeRoute");
 app.use("/api/v1/notice", noticerouter);
 
