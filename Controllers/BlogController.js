@@ -3,44 +3,40 @@ const Blog = require("../Models/BlogSchema");
 
 // create Blogs
 const createBlog = asyncHandler(async (req, res) => {
-  if(req.file){
-    console.log('file check successful', req.file);
-  }
   try {
-    const { title, description,  category } = req.body;
-    if (!title || !description  || !category) {
-      return res
-        .status(400)
-        .json({
+    const { title, description, category } = req.body;
+    if (req.file) {
+      if (
+        title?.trim() === "" ||
+        description?.trim() === "" ||
+        category?.trim() === ""
+      ) {
+        return res.status(400).json({
           error:
             "All fields (title, description, image, category) are required",
         });
-    }
-    let image;
-    if (req.file) {
-      image = req.file.path;
+      }
+      const image = req.file.path;
+      const newBlog = new Blog({
+        title,
+        description,
+        image,
+        category,
+      });
+      const savedBlog = await newBlog.save();
+      res.status(201).json({
+        success: true,
+        message: "Blog Created successfully",
+        savedBlog,
+      });
     } else {
       return res.status(400).json({ error: "Image is required" });
     }
-    const newBlog = new Blog({
-      title,
-      description,
-      image,
-      category,
-    });
-    const savedBlog = await newBlog.save();
-    res.status(201).json({
-      message: "Blog Created successfully",
-      savedBlog,
-    });
   } catch (error) {
     console.error("Error creating blog:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
 
 // get all  Blogs
 const getAllBlogs = asyncHandler(async (req, res) => {
@@ -61,11 +57,6 @@ const getAllBlogs = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-
-
 
 // get single  Blogs
 const getBlogById = asyncHandler(async (req, res) => {
@@ -88,12 +79,6 @@ const getBlogById = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-
-
-
 
 // edit Blogs by id
 const updateBlogById = asyncHandler(async (req, res) => {
@@ -125,12 +110,6 @@ const updateBlogById = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
-
-
-
 // delete single Blogs
 const deleteBlogById = asyncHandler(async (req, res) => {
   try {
@@ -150,13 +129,6 @@ const deleteBlogById = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
 // delete all  Blogs
 const deleteAllBlogs = asyncHandler(async (req, res) => {
   try {
@@ -170,10 +142,6 @@ const deleteAllBlogs = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-
 
 module.exports = {
   createBlog,
