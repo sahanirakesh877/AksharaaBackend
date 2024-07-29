@@ -5,7 +5,7 @@ const Category = require("../Models/BlogCategorySchema");
 const createCategory = asyncHandler(async (req, res) => {
   try {
     const category = new Category({
-      title: req.body.newCategory,
+      title: req.body.title,
     });
 
     await category.save();
@@ -16,6 +16,7 @@ const createCategory = asyncHandler(async (req, res) => {
       categories,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
   console.log(req.body);

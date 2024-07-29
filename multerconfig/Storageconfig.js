@@ -1,9 +1,9 @@
 const multer = require("multer");
 
-// Set up Multer storage options
-const storage = multer.diskStorage({
+// Set up Multer storage options for Blog images
+const blogStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads/noticePost");
+    cb(null, "./uploads/blog");
   },
   filename: function (req, file, cb) {
     // Set filename for uploaded files
@@ -12,7 +12,16 @@ const storage = multer.diskStorage({
   },
 });
 
-
+const noticeStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "/uploads/notices");
+  },
+  filename: function (req, file, cb) {
+    // Set filename for uploaded files
+    const filename = `image-${Date.now()}.${file.originalname}`;
+    cb(null, filename);
+  },
+});
 
 // Define file filter function to allow only specific image types
 const fileFilter = (req, file, cb) => {
@@ -27,9 +36,14 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Initialize Multer with configured options
-const upload = multer({
-  storage: storage,
+const blogUpload = multer({
+  storage: blogStorage,
   fileFilter: fileFilter,
 });
 
-module.exports = upload;
+const noticesUpload = multer({
+  storage: noticeStorage,
+  fileFilter: fileFilter,
+});
+
+module.exports = { blogUpload, noticesUpload };

@@ -4,7 +4,9 @@ const router = express.Router();
 const blogcontroller = require("../Controllers/BlogController");
 const upload = require("../multerconfig/Storageconfig");
 
-router.route("/createblog").post(upload.single('Blogimage'),blogcontroller.createBlog);
+router
+  .route("/createblog")
+  .post(upload.blogUpload.single("Blogimage"), blogcontroller.createBlog);
 router.route("/getallblogs").get(blogcontroller.getAllBlogs);
 router.route("/getblog/:id").get(blogcontroller.getBlogById);
 router.route("/updateblog/:id").put(blogcontroller.updateBlogById);
