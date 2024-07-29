@@ -6,11 +6,16 @@ const nodemailer = require("nodemailer");
 const createNotice = asyncHandler(async (req, res) => {
   try {
     // const { images } = req.body;
-    const image = req.files.map((file) => file.path);
-    const newNotice = new Notice({ image });
+    console.log(req.file)
+    const image = req.file.path
+    const newNotice = new Notice({ images: image });
     await newNotice.save();
-    res.status(201).json(newNotice);
+    res.status(201).json({
+      success: true,
+      message: "Notice created"
+    });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
