@@ -40,14 +40,16 @@ const createBlog = asyncHandler(async (req, res) => {
 
 // get all  Blogs
 const getAllBlogs = asyncHandler(async (req, res) => {
+  console.log("getting blogs");
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find({});
     // Count the total number of blogs
     const TotalblogsLength = await Blog.countDocuments();
     if (!blogs) {
       return res.status(404).json({ message: "Blogs not found" });
     }
     res.status(200).json({
+      success: true,
       message: "All blogs retrieved successfully",
       TotalblogsLength,
       blogs,
