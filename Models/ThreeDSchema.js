@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const gallerySchema = new mongoose.Schema(
+const ThreeDSchema = new mongoose.Schema(
   {
     images: [
       {
@@ -12,5 +12,5 @@ const gallerySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const galleryModel = mongoose.model("Gallery", gallerySchema);
-module.exports = galleryModel;
+const ThreegalleryModel = mongoose.model("gallerythree", ThreeDSchema);
+module.exports = ThreegalleryModel;

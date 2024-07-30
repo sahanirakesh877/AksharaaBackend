@@ -12,6 +12,10 @@ const blogStorage = multer.diskStorage({
   },
 });
 
+
+
+
+// Set up Multer storage options for notice images
 const noticeStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads/notices");
@@ -22,6 +26,43 @@ const noticeStorage = multer.diskStorage({
     cb(null, filename);
   },
 });
+
+
+
+
+
+// Set up Multer storage options for 3d image rotation images
+const ThreeDGalleryStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/ThreeDGallery");
+  },
+  filename: function (req, file, cb) {
+    // Set filename for uploaded files
+    const filename = `image-${Date.now()}.${file.originalname}`;
+    cb(null, filename);
+  },
+});
+
+
+
+
+// Set up Multer storage options for Heroimages
+const heroStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/hero");
+  },
+  filename: function (req, file, cb) {
+    // Set filename for uploaded files
+    const filename = `image-${Date.now()}.${file.originalname}`;
+    cb(null, filename);
+  },
+});
+
+
+
+
+
+
 
 // Define file filter function to allow only specific image types
 const fileFilter = (req, file, cb) => {
@@ -35,6 +76,11 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+
+
+
+
+
 // Initialize Multer with configured options
 const blogUpload = multer({
   storage: blogStorage,
@@ -46,4 +92,15 @@ const noticesUpload = multer({
   fileFilter: fileFilter,
 });
 
-module.exports = { blogUpload, noticesUpload };
+const ThreeDGalleryUpload = multer({
+  storage: ThreeDGalleryStorage,
+  fileFilter: fileFilter,
+});
+
+const HeroUpload = multer({
+  storage: heroStorage,
+  fileFilter: fileFilter,
+});
+
+
+module.exports = { blogUpload, noticesUpload,ThreeDGalleryUpload ,HeroUpload};
