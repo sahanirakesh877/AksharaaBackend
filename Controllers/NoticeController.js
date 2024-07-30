@@ -20,22 +20,29 @@ const createNotice = asyncHandler(async (req, res) => {
   }
 });
 
+
+
 // Get all notices
 const getNotices = asyncHandler(async (req, res) => {
   try {
     const notices = await Notice.find();
-    res.status(200).json(notices);
+    res.status(200).json({
+      success:true,
+      notices
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 // Delete a notice
 const deleteNotice = asyncHandler(async (req, res) => {
   try {
     const notice = await Notice.findByIdAndDelete(req.params.id);
     if (!notice) return res.status(404).json({ message: "Notice not found" });
-    res.status(200).json({ message: "Notice deleted" });
+    res.status(200).json({success: true,  message: "Notice deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -3,8 +3,6 @@ const asyncHandler = require("express-async-handler");
 
 
 
-
-
 // Create a new threeDimage
 const createThreeDPhoto = asyncHandler(async (req, res) => {
   try {
@@ -22,22 +20,26 @@ const createThreeDPhoto = asyncHandler(async (req, res) => {
   }
 });
 
+
+
 // Get all threeDimage
 const getAllThreeDImage = asyncHandler(async (req, res) => {
   try {
     const gallery = await GalleryThreeD.find();
-    res.status(200).json(gallery);
+    res.status(200).json({success: true, gallery});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 // Delete a deleteThreeD
 const deleteThreeD = asyncHandler(async (req, res) => {
   try {
     const gallery = await GalleryThreeD.findByIdAndDelete(req.params.id);
     if (!gallery) return res.status(404).json({ message: "ThreeDImage not found" });
-    res.status(200).json({ message: "ThreeDImage deleted" });
+    res.status(200).json({ success: true, message: "ThreeDImage deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
