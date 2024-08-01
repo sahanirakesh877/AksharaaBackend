@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Blog = require("../Models/BlogSchema");
+const path = require("path");
+const fs = require("fs");
 
 // create Blogs
 const createBlog = asyncHandler(async (req, res) => {
@@ -34,7 +36,7 @@ const createBlog = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.error("Error creating blog:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error });
   }
 });
 
@@ -48,6 +50,9 @@ const getAllBlogs = asyncHandler(async (req, res) => {
     if (!blogs) {
       return res.status(404).json({ message: "Blogs not found" });
     }
+
+    await Promise.all(blogs.map((blog) => blog.populate("category")));
+
     res.status(200).json({
       success: true,
       message: "All blogs retrieved successfully",
@@ -60,19 +65,20 @@ const getAllBlogs = asyncHandler(async (req, res) => {
   }
 });
 
-// get single  Blogs
+// get single  Blog
 const getBlogById = asyncHandler(async (req, res) => {
   try {
     const blogId = req.params.id;
     if (!blogId) {
       return res.status(404).json({ error: "Blog id not found" });
     }
-    const blog = await Blog.findById(blogId);
+    const blog = await Blog.findById(blogId).populate("category");
     if (!blog) {
       res.status(404).json({ error: "Single Blog not found" });
     } else {
       res.status(200).json({
-        message: "Single blogs found Successfully",
+        success: true,
+        message: "fetched blog",
         blog,
       });
     }
@@ -121,10 +127,47 @@ const deleteBlogById = asyncHandler(async (req, res) => {
     }
 
     const deleteBlog = await Blog.findByIdAndDelete(blogId);
-    return res.status(200).json({
-      message: " Single Blog deleted successfully",
-      deleteBlog,
-    });
+
+    const blogs = await Blog.find({});
+    // Count the total number of blogs
+    const TotalblogsLength = await Blog.countDocuments();
+
+    await Promise.all(blogs.map((blog) => blog.populate("category")));
+
+    if (deleteBlog) {
+      const fileUrl = deleteBlog.image;
+      const filePath = path.join(__dirname, "..", fileUrl);
+      const normalizedPath = path.normalize(filePath);
+
+      console.log(`Deleting file at path: ${normalizedPath}`);
+
+      if (fs.existsSync(normalizedPath)) {
+        fs.unlink(normalizedPath, async (err) => {
+          if (err) {
+            console.error(`Error deleting file: ${err.message}`);
+            return res
+              .status(500)
+              .json({ message: "Error deleting file", error: err.message });
+          }
+          res.json({
+            success: true,
+            message: "Blog Deleted",
+            TotalblogsLength,
+            blogs,
+          });
+        });
+      } else {
+        res.json({
+          status: true,
+          message: "blog deleted without image.",
+        });
+      }
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "blog not found",
+      });
+    }
   } catch (error) {
     console.error("Error in delete single blog:", error);
     res.status(500).json({ error: "Internal server error" });

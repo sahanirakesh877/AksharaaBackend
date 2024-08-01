@@ -7,10 +7,10 @@ const upload = require("../multerconfig/Storageconfig");
 router
   .route("/createblog")
   .post(upload.blogUpload.single("Blogimage"), blogcontroller.createBlog);
-router.route("/getallblogs").get(blogcontroller.getAllBlogs);
-router.route("/getblog/:id").get(blogcontroller.getBlogById);
+router.route("/").get(blogcontroller.getAllBlogs);
+router.route("/:id").get(blogcontroller.getBlogById);
 router.route("/updateblog/:id").put(blogcontroller.updateBlogById);
-router.route("/deleteblog/:id").delete(blogcontroller.deleteBlogById);
+router.route("/:id").delete(blogcontroller.deleteBlogById);
 router.route("/deleteallblogs").delete(blogcontroller.deleteAllBlogs);
 
 module.exports = router;

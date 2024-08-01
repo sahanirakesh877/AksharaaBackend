@@ -39,7 +39,7 @@ app.use(
   })
 );
 
-app.use("/uploads",express.static("uploads/") )
+app.use("/uploads", express.static("uploads/"));
 
 require("./service/passport");
 // setup passport instance
@@ -63,54 +63,33 @@ app.get("/login/success", async (req, res) => {
   res.status(200).send("Login successful!");
 });
 
-
-
 // user routes defined
 const userrouter = require("./Routes/UserRoutes");
 app.use("/api/v1", userrouter);
-
-
 
 // blogs  routes defined
 const blogrouter = require("./Routes/BlogRoute");
 app.use("/api/v1/blog", blogrouter);
 
-
-
-
 // notice  routes defined
 const noticerouter = require("./Routes/NoticeRoute");
 app.use("/api/v1/notice", noticerouter);
-
-
-
 
 // HeroPhotos  routes defined
 const herorouter = require("./Routes/heroRoute");
 app.use("/api/v1/hero", herorouter);
 
-
-
-
 // 3DPhotos-rotation  routes defined
 const ThreeDrouter = require("./Routes/GalleryThreeDRoute");
 app.use("/api/v1/three", ThreeDrouter);
-
-
 
 // enquiry route defined
 const enquiryRouter = require("./Routes/enquiryRoute");
 app.use("/api/v1/enquiry", enquiryRouter);
 
-
-
-
 // blog category route defined
 const blogCategoryRoute = require("./Routes/blogCategoryRoute");
 app.use("/api/v1/category", blogCategoryRoute);
-
-
-
 
 app.listen(PORT, () => {
   console.log(` Server listening on ${PORT}`);
