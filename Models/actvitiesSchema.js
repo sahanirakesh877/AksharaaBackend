@@ -14,13 +14,10 @@ const activitiesSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
+    category: { type: mongoose.Types.ObjectId, ref: "activitiesCategory" },
   },
   { timestamps: true }
 );
 
-const blogModel = mongoose.model("Activities", blogSchema);
+const blogModel = mongoose.model("Activities", activitiesSchema);
 module.exports = blogModel;
