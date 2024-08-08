@@ -91,6 +91,14 @@ app.use("/api/v1/enquiry", enquiryRouter);
 const blogCategoryRoute = require("./Routes/blogCategoryRoute");
 app.use("/api/v1/category", blogCategoryRoute);
 
+// activity category route defined
+const activityCategoryRoute = require("./Routes/activityCategoryRoute");
+app.use("/api/v1/activityCategory", activityCategoryRoute);
+
+// activities route defined
+const activityRoute = require("./Routes/activitiesRoute");
+app.use("/api/v1/activity", activityRoute);
+
 app.listen(PORT, () => {
   console.log(` Server listening on ${PORT}`);
 });
