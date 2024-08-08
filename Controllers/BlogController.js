@@ -96,11 +96,11 @@ const updateBlogById = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Blog id not found" });
     }
 
-    const { title, description, image, category } = req.body;
+    const { title, description, selectedCategory } = req.body;
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       blogId,
-      { title, description, image, category },
+      { title, description, category: selectedCategory },
       { new: true, runValidators: true }
     );
 
@@ -108,6 +108,7 @@ const updateBlogById = asyncHandler(async (req, res) => {
       res.status(404).json({ error: "Blog not found" });
     } else {
       res.status(200).json({
+        success: true,
         message: "blog updated successfully",
         updatedBlog,
       });
@@ -188,6 +189,61 @@ const deleteAllBlogs = asyncHandler(async (req, res) => {
   }
 });
 
+const reuploadImage = asyncHandler(async (req, res) => {
+  try {
+    const blogId = req.params.id;
+
+    const blogFound = await Blog.findById(blogId);
+
+    if (!blogFound) {
+      return res.status(404).json({ error: "blog not found" });
+    }
+    if (req.file) {
+      const filePath = path.join(__dirname, "..", blogFound.image);
+      const normalizedPath = path.normalize(filePath);
+
+      console.log(`Deleting file at path: ${normalizedPath}`);
+
+      if (fs.existsSync(normalizedPath)) {
+        fs.unlink(normalizedPath, async (err) => {
+          if (err) {
+            console.error(`Error deleting file: ${err.message}`);
+            return res
+              .status(500)
+              .json({ message: "Error deleting file", error: err.message });
+          }
+          console.log(req.file.path);
+          blogFound.image = req.file.path;
+          await blogFound.save();
+          console.log("updated");
+
+          res.json({
+            success: true,
+            message: "blog image updated",
+          });
+        });
+      } else {
+        console.log(req.file.path);
+        blogFound.image = req.file.path;
+        await blogFound.save();
+        res.json({
+          success: true,
+          message: "blog deleted without image.",
+        });
+      }
+
+      blogFound.image = req.file.path;
+    } else {
+      res.json({
+        message: "file not uploaded",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createBlog,
   getAllBlogs,
@@ -195,4 +251,5 @@ module.exports = {
   updateBlogById,
   deleteAllBlogs,
   deleteBlogById,
+  reuploadImage,
 };

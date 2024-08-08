@@ -76,14 +76,16 @@ const getActivityById = asyncHandler(async (req, res) => {
     if (!activityId) {
       return res.status(404).json({ error: "activity id not found" });
     }
-    const activity = await activity.findById(activityId).populate("category");
-    if (!activity) {
+    const activityFound = await activity
+      .findById(activityId)
+      .populate("category");
+    if (!activityFound) {
       res.status(404).json({ error: "Single activity not found" });
     } else {
       res.status(200).json({
         success: true,
         message: "fetched activity",
-        activity,
+        activity: activityFound,
       });
     }
   } catch (error) {
@@ -100,11 +102,11 @@ const updateActivityById = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "activity id not found" });
     }
 
-    const { title, description, image, category } = req.body;
+    const { title, description, selectedCategory } = req.body;
 
     const updatedActivity = await activity.findByIdAndUpdate(
       activityId,
-      { title, description, image, category },
+      { title, description, category: selectedCategory },
       { new: true, runValidators: true }
     );
 
@@ -112,6 +114,7 @@ const updateActivityById = asyncHandler(async (req, res) => {
       res.status(404).json({ error: "activity not found" });
     } else {
       res.status(200).json({
+        success: true,
         message: "activity updated successfully",
         updatedActivity,
       });
@@ -194,6 +197,61 @@ const deleteAllActivities = asyncHandler(async (req, res) => {
   }
 });
 
+const reuploadImage = asyncHandler(async (req, res) => {
+  try {
+    const activityId = req.params.id;
+
+    const activityFound = await activity.findById(activityId);
+
+    if (!activityFound) {
+      return res.status(404).json({ error: "activity not found" });
+    }
+    if (req.file) {
+      const filePath = path.join(__dirname, "..", activityFound.image);
+      const normalizedPath = path.normalize(filePath);
+
+      console.log(`Deleting file at path: ${normalizedPath}`);
+
+      if (fs.existsSync(normalizedPath)) {
+        fs.unlink(normalizedPath, async (err) => {
+          if (err) {
+            console.error(`Error deleting file: ${err.message}`);
+            return res
+              .status(500)
+              .json({ message: "Error deleting file", error: err.message });
+          }
+          console.log(req.file.path);
+          activityFound.image = req.file.path;
+          await activityFound.save();
+          console.log("updated");
+
+          res.json({
+            success: true,
+            message: "activity image updated",
+          });
+        });
+      } else {
+        console.log(req.file.path);
+        activityFound.image = req.file.path;
+        await activityFound.save();
+        res.json({
+          success: true,
+          message: "activity deleted without image.",
+        });
+      }
+
+      activityFound.image = req.file.path;
+    } else {
+      res.json({
+        message: "file not uploaded",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   createActivity,
   getAllActivities,
@@ -201,4 +259,5 @@ module.exports = {
   updateActivityById,
   deleteAllActivities,
   deleteActivityById,
+  reuploadImage,
 };
